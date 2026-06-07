@@ -1,6 +1,9 @@
 node_modules
 .next
 out
+.cache
+# dev-only data mirror — production serves /data from the mounted volume, not the image
+public/data
 .git
 .github
 .husky

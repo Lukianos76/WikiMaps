@@ -1,0 +1,12 @@
+Basemap data — Natural Earth (public domain)
+============================================
+
+Files:
+  land-50m.geojson        Natural Earth 1:50m physical "land"
+  coastline-50m.geojson   Natural Earth 1:50m physical "coastline"
+
+Source:  https://www.naturalearthdata.com  (public domain, no attribution required)
+Mirror:  https://github.com/martynafford/natural-earth-geojson (110m/physical)
+
+Natural Earth is free to use without restriction; the credit in the in-app
+attribution overlay is courtesy, not obligation.

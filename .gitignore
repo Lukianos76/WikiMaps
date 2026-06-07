@@ -37,3 +37,6 @@ next-env.d.ts
 
 # data pipeline: raw upstream cache (not committed; re-fetched via `npm run data:fetch`)
 /.cache/
+
+# dev-only mirror of /data into /public so `next dev` serves /data/* (prod uses the Nginx volume)
+/public/data/

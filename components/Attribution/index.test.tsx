@@ -12,8 +12,7 @@ describe('Attribution', () => {
       </NextIntlClientProvider>
     );
 
-    expect(screen.getByRole('link', { name: 'Historical Basemaps' })).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Wikidata' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'OpenHistoricalMap' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Natural Earth' })).toBeInTheDocument();
   });
 });

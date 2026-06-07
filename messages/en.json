@@ -4,8 +4,8 @@
     "tagline": "The free and open interactive world atlas"
   },
   "Map": {
-    "comingSoonTitle": "The map is coming soon",
-    "comingSoonBody": "World historical borders and a time slider — under construction.",
+    "loading": "Loading the map…",
+    "loadError": "Could not load the map data. Please try again.",
     "placeholderTimeline": "Time slider (coming soon)"
   },
   "LanguageSwitcher": {

@@ -3,8 +3,8 @@
 import { useTranslations } from 'next-intl';
 
 /**
- * Attribution — mandatory data sources (see docs/DATA_SOURCES.md).
- * Historical Basemaps (CC BY-SA 4.0), Wikidata (CC0), Natural Earth (public domain).
+ * Attribution — mandatory data sources (see docs/DATA_SOURCES.md and data/NOTICE).
+ * Historical borders: OpenHistoricalMap (CC0). Basemap: Natural Earth (public domain).
  */
 export function Attribution() {
   const t = useTranslations('Attribution');
@@ -13,21 +13,12 @@ export function Attribution() {
     <p className="text-[10px] leading-tight text-neutral-500">
       {t('data')}:{' '}
       <a
-        href="https://github.com/aourednik/historical-basemaps"
+        href="https://www.openhistoricalmap.org"
         target="_blank"
         rel="noopener noreferrer"
         className="underline hover:text-neutral-700"
       >
-        Historical Basemaps
-      </a>{' '}
-      (CC BY-SA 4.0) · {t('metadata')}:{' '}
-      <a
-        href="https://www.wikidata.org"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="underline hover:text-neutral-700"
-      >
-        Wikidata
+        OpenHistoricalMap
       </a>{' '}
       (CC0) · {t('basemap')}:{' '}
       <a

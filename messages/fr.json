@@ -4,8 +4,8 @@
     "tagline": "L'atlas mondial interactif, libre et ouvert"
   },
   "Map": {
-    "comingSoonTitle": "La carte arrive bientôt",
-    "comingSoonBody": "Frontières historiques mondiales et slider temporel — en construction.",
+    "loading": "Chargement de la carte…",
+    "loadError": "Impossible de charger les données de la carte. Veuillez réessayer.",
     "placeholderTimeline": "Slider temporel (à venir)"
   },
   "LanguageSwitcher": {
