@@ -1,0 +1,34 @@
+WikiMaps — data attribution & licensing
+========================================
+
+Historical borders (data/borders/)
+-----------------------------------
+Derived from Historical Basemaps by André Ourednik and contributors:
+  https://github.com/aourednik/historical-basemaps
+
+Upstream license status (verified 2026-06):
+  - The repository ships a single LICENSE file: GNU GPL-3.0.
+  - Neither the README nor CONTRIBUTING states an explicit license for the
+    DATA itself. Applying GPL-3.0 (a software license) to data is ambiguous.
+  - ACTION REQUIRED before any public launch: obtain a written clarification
+    of the data license from the author (e.g. a GitHub issue), and update this
+    NOTICE and docs/DATA_SOURCES.md accordingly. Treat the data as GPL-3.0
+    (attribution + share-alike + preserve this notice) until clarified.
+
+WikiMaps transforms these snapshots into an enriched GeoJSON schema
+(localized names, sources, numeric years). The transformed files in
+data/borders/ are a derivative work and inherit the upstream license.
+
+Metadata enrichment
+-------------------
+Localized territory names and Wikipedia links are sourced from Wikidata
+(https://www.wikidata.org), released under CC0 1.0 (public domain).
+
+Basemap (planned)
+-----------------
+Natural Earth (https://www.naturalearthdata.com) — public domain.
+
+In-app attribution string
+--------------------------
+Historical data: Historical Basemaps (https://github.com/aourednik/historical-basemaps)
+· Metadata: Wikidata (CC0) · Basemap: Natural Earth (public domain)
