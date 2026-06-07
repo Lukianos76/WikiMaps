@@ -43,19 +43,28 @@ Read these documents BEFORE writing any code:
 
 ## Current phase
 
-**Phase 1 — Data pipeline**
+**Data direction pivot — detailed, year-precise, curated (Europe-first).**
 
-- [ ] Evaluate/select the main source (Historical Basemaps) + check granularity/coverage
-- [ ] Transformation script → enriched GeoJSON (multilingual names, sources, years)
-- [ ] Validate data quality (gaps, geometry errors)
-- [ ] Enrich multilingual names via Wikidata
-- [ ] Store the GeoJSON in `/data/borders/`
+The original snapshot approach with Historical Basemaps proved too coarse/low-granularity.
+New direction: a **detailed, year-precise** dataset **seeded from OpenHistoricalMap (CC0)**
+and refined by hand over time, starting with **Europe over the last centuries**. Aim (long
+term, via curation/crowdsourcing): Cottereau / Ollie Bye level detail — which is hand-made,
+not a downloadable dataset.
 
-Exit criterion: GeoJSON available for ≥ 20 centuries, names in EN + FR.
+- Data model: per-entity `from`/`to` validity + Wikidata QID + multilingual `names` (see
+  `TemporalTerritoryProperties`). OHM is too densely versioned to bulk-download as one file,
+  so the seed produces bounded per-year detailed snapshots (`data/europe/admin2-<year>.geojson`).
+- Pipeline: `scripts/pipeline/source/openhistoricalmap.ts` + `seed-europe.ts`
+  (`npm run data:seed-europe`).
+- The app renders a fixed year from the snapshot; a time slider (Phase 3) will drive it.
+- `data/borders/` (Historical Basemaps world snapshots) stays as a possible deep-time fallback
+  but is unused by the app. See `docs/DATA_SOURCES.md` and `data/NOTICE`.
 
-> **Phase 0 — Setup & Foundations: complete ✅**
-> Next 16 + EN/FR i18n + Docker + green CI, image published to GHCR.
-> `docker compose up` runs the app. Remaining manual step: VPS deploy.
+Deferred work is tracked as GitHub issues (full-Europe extraction, geometry simplification,
+Wikidata multilingual backfill, name-history from OHM chronology relations, curation editor).
+
+> **Phase 0 — Setup & Foundations: complete ✅** · **Phase 2 — Base map (MapLibre): done**
+> (MapLibre + Natural Earth basemap, full-screen, zoom/pan). Remaining manual step: VPS deploy.
 
 ## Target project structure
 

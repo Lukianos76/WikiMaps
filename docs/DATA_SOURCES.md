@@ -1,5 +1,14 @@
 # 🗄️ WikiMaps — Data Sources
 
+> **⚠️ Direction update (2026-06).** Historical Basemaps proved too coarse. The active source
+> is now **OpenHistoricalMap (CC0)** — detailed, **year-precise** (per-feature validity dates),
+> with multilingual names and Wikidata QIDs — seeded into our own dataset and refined by hand,
+> **Europe-first**. OHM is too densely versioned to bulk-download in one file, so the seed
+> produces bounded per-year detailed snapshots (`data/europe/admin2-<year>.geojson`) via the
+> OHM Overpass API (`scripts/pipeline/source/openhistoricalmap.ts`, `npm run data:seed-europe`).
+> The Historical Basemaps material below is retained as a possible deep-time fallback (its GPL
+> data-license ambiguity, issue #12, only matters if those files ship). CC0 sidesteps that.
+
 ## Objective
 
 Inventory the open source data sources usable for WikiMaps, and assess their quality, temporal coverage, license, and technical compatibility.
