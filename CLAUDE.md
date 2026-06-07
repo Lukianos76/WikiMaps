@@ -21,12 +21,15 @@ Lis ces documents AVANT de coder quoi que ce soit :
 
 ## Stack
 
-- Next.js 14+ (App Router) + TypeScript strict
+- Next.js 16 (App Router) + TypeScript strict (TS 6)
+- React 19
 - MapLibre GL JS (rendu WebGL)
-- Tailwind CSS (UI hors-carte uniquement)
-- next-intl (i18n FR/EN natif dès le début)
-- Docker multi-stage (Nginx) + docker-compose
+- Tailwind CSS v4 (CSS-first, UI hors-carte uniquement)
+- next-intl 4 (i18n FR/EN natif dès le début)
+- Export statique Next.js servi par Nginx (pas de middleware → Accept-Language géré par Nginx)
+- Docker multi-stage (Node 24 → Nginx) + docker-compose
 - GitHub Actions → GHCR
+- Outillage : ESLint 9 (flat config `eslint.config.mjs`), Prettier, Husky + lint-staged
 
 ## Règles non négociables
 
@@ -34,19 +37,23 @@ Lis ces documents AVANT de coder quoi que ce soit :
 - Multilingue natif : tout texte visible passe par next-intl, jamais de string hardcodée
 - Map-first : la carte occupe 100vw x 100vh, les composants UI sont superposés
 - Chaque composant dans son dossier : `components/NomComposant/index.tsx`
-- Commits en Conventional Commits : `feat:`, `fix:`, `data:`, `i18n:`, `docs:`
+- Commits en Conventional Commits : `feat:`, `fix:`, `data:`, `i18n:`, `docs:`, `chore:`
 
 ## Phase actuelle
 
-**Phase 0 — Setup & Fondations**
+**Phase 1 — Pipeline de données**
 
-- [ ] Initialiser Next.js 14 + TypeScript + Tailwind
-- [ ] Configurer next-intl (routing /fr /en, fichiers messages/fr.json + messages/en.json)
-- [ ] Écrire le Dockerfile multi-stage + docker-compose.yml + nginx.conf
-- [ ] Configurer GitHub Actions (build + lint + push GHCR)
-- [ ] ESLint + Prettier + Husky
+- [ ] Évaluer/retenir la source principale (Historical Basemaps) + vérifier granularité/couverture
+- [ ] Script de transformation → GeoJSON enrichi (noms multilingues, sources, années)
+- [ ] Valider la qualité des données (trous, erreurs géométriques)
+- [ ] Enrichir les noms multilingues via Wikidata
+- [ ] Stocker les GeoJSON dans `/data/borders/`
 
-Critère de sortie : `docker-compose up` lance l'app, GitHub Actions passe au vert.
+Critère de sortie : GeoJSON disponibles pour ≥ 20 siècles, noms FR + EN.
+
+> **Phase 0 — Setup & Fondations : terminée ✅**
+> Next 16 + i18n FR/EN + Docker + CI verte, image publiée sur GHCR.
+> `docker compose up` lance l'app. Reste manuel : déploiement VPS.
 
 ## Structure cible du projet
 
