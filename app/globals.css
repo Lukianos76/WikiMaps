@@ -1,0 +1,22 @@
+@import 'tailwindcss';
+
+/* Tailwind v4: theme configured CSS-first via @theme. */
+@theme {
+  /* Sans-serif for the UI */
+  --font-sans: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Discreet serif for territory names (see UX Principle 5) */
+  --font-serif: Georgia, Cambria, 'Times New Roman', serif;
+}
+
+/* Map-first: the map fills 100vw x 100vh, no overflow. */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  @apply font-sans antialiased;
+}

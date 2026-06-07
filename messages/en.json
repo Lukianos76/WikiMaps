@@ -1,0 +1,21 @@
+{
+  "App": {
+    "title": "WikiMaps",
+    "tagline": "The free and open interactive world atlas"
+  },
+  "Map": {
+    "comingSoonTitle": "The map is coming soon",
+    "comingSoonBody": "World historical borders and a time slider — under construction.",
+    "placeholderTimeline": "Time slider (coming soon)"
+  },
+  "LanguageSwitcher": {
+    "label": "Language",
+    "fr": "Français",
+    "en": "English"
+  },
+  "Attribution": {
+    "data": "Historical data",
+    "metadata": "Metadata",
+    "basemap": "Basemap"
+  }
+}

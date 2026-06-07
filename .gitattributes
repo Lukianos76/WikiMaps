@@ -1,0 +1,20 @@
+# Normalize line endings: LF in the repo, regardless of the contributor's OS.
+# Removes "LF will be replaced by CRLF" warnings and avoids noisy diffs.
+* text=auto eol=lf
+
+# Binary files: never convert line endings.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+
+# Geographic data: text, always LF.
+*.geojson text eol=lf
+*.json text eol=lf
+
+# Shell scripts / Husky hooks: must stay LF to execute.
+*.sh text eol=lf

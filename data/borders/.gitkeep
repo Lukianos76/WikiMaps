@@ -1,0 +1,2 @@
+# Historical border GeoJSON per century (Phase 1).
+# Served by Nginx under /data/borders/ (mounted as a volume via docker-compose).
