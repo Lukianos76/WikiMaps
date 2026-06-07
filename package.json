@@ -13,6 +13,11 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "data:fetch": "tsx scripts/pipeline/fetch.ts",
+    "data:enrich": "tsx scripts/pipeline/enrich-wikidata.ts",
+    "data:transform": "tsx scripts/pipeline/transform.ts",
+    "data:validate": "tsx scripts/pipeline/validate.ts",
+    "data:build": "npm run data:fetch && npm run data:enrich && npm run data:transform && npm run data:validate",
     "prepare": "husky"
   },
   "dependencies": {
@@ -28,6 +33,7 @@
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^24.13.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
@@ -41,6 +47,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.0",
+    "tsx": "^4.20.6",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
   },

@@ -6,3 +6,7 @@ public
 package-lock.json
 .claude
 CLAUDE.md
+
+# data pipeline: raw upstream cache + generated Wikidata cache (not hand-edited)
+.cache
+scripts/pipeline/wikidata-cache.json
