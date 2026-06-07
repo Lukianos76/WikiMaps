@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    container_name: wikimaps
+    ports:
+      - '3000:80'
+    volumes:
+      # Données GeoJSON servies sans rebuild de l'image (cf. Architecture)
+      - ./data:/usr/share/nginx/html/data:ro
+    restart: unless-stopped

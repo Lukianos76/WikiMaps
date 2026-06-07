@@ -1,0 +1,21 @@
+{
+  "App": {
+    "title": "WikiMaps",
+    "tagline": "L'atlas mondial interactif, libre et ouvert"
+  },
+  "Map": {
+    "comingSoonTitle": "La carte arrive bientôt",
+    "comingSoonBody": "Frontières historiques mondiales et slider temporel — en construction.",
+    "placeholderTimeline": "Slider temporel (à venir)"
+  },
+  "LanguageSwitcher": {
+    "label": "Langue",
+    "fr": "Français",
+    "en": "English"
+  },
+  "Attribution": {
+    "data": "Données historiques",
+    "metadata": "Métadonnées",
+    "basemap": "Fond de carte"
+  }
+}
