@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import simplify from '@turf/simplify';
 import type {
   Feature,
   FeatureCollection,
@@ -12,6 +13,7 @@ import osmtogeojson from 'osmtogeojson';
 
 import { ROOT } from './config';
 import {
+  EUROPE_BBOX,
   SOURCE_NAME,
   buildSnapshotQuery,
   fetchOverpass,
@@ -22,13 +24,16 @@ import type { TemporalTerritoryProperties } from './types';
 
 const OUT_DIR = path.join(ROOT, 'data', 'europe');
 
-// MVP starting region (France and neighbours) and demo years. A single all-time
-// query exceeds Node's max string size, so we seed bounded per-year detailed
-// snapshots (~5 MB each). Scaling to all of Europe / a fine cadence needs vector
-// tiles or geometry simplification (tracked as a follow-up issue).
-const MVP_BBOX: [number, number, number, number] = [42, -5, 51, 9];
-const YEARS = [1600, 1900];
-const COORD_DECIMALS = 4; // ~11 m precision — plenty for a continental atlas
+// Full-Europe detailed snapshots at a coarse cadence. A single all-history query
+// is too large to buffer, but one year for all of Europe is ~49 MB (fine). Each
+// snapshot is geometry-simplified + coordinate-rounded to stay committable. Finer
+// cadence = just add years (watch the total committed size). See issue #17.
+const YEARS = [1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850, 1900, 1950, 2000];
+const SIMPLIFY_TOLERANCE = 0.01; // degrees (~1 km) — crisp at continental zoom
+const COORD_DECIMALS = 4; // ~11 m precision
+const POLITE_DELAY_MS = 2000;
+
+const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
 type Nested = number | Nested[];
 
@@ -52,12 +57,20 @@ function isPolygonal(geometry: Geometry | null): geometry is Polygon | MultiPoly
   return geometry?.type === 'Polygon' || geometry?.type === 'MultiPolygon';
 }
 
+/** Simplify then round; fall back to the rounded original if simplify fails. */
+function compactGeometry(g: Polygon | MultiPolygon): Polygon | MultiPolygon {
+  try {
+    const simplified = simplify(g, { tolerance: SIMPLIFY_TOLERANCE, highQuality: false });
+    return roundGeometry(simplified);
+  } catch {
+    return roundGeometry(g);
+  }
+}
+
 async function seedYear(year: number): Promise<void> {
   const yearStr = String(year).padStart(4, '0');
-  console.log(
-    `Querying ${SOURCE_NAME} admin_level=2 @ ${year} (bbox ${MVP_BBOX.join(',')})…`
-  );
-  const osm = await fetchOverpass(buildSnapshotQuery(MVP_BBOX, 2, yearStr));
+  console.log(`Querying ${SOURCE_NAME} admin_level=2 @ ${year} (Europe)…`);
+  const osm = await fetchOverpass(buildSnapshotQuery(EUROPE_BBOX, 2, yearStr));
   const collection = osmtogeojson(osm) as FeatureCollection;
 
   const out: Feature<Geometry, TemporalTerritoryProperties>[] = [];
@@ -70,7 +83,7 @@ async function seedYear(year: number): Promise<void> {
     if (!props) continue;
     out.push({
       type: 'Feature',
-      geometry: roundGeometry(feature.geometry),
+      geometry: compactGeometry(feature.geometry),
       properties: props
     });
   }
@@ -79,17 +92,18 @@ async function seedYear(year: number): Promise<void> {
   const file = path.join(OUT_DIR, `admin2-${year}.geojson`);
   await writeFile(file, JSON.stringify(fc) + '\n', 'utf8');
 
+  const kb = Math.round(Buffer.byteLength(JSON.stringify(fc)) / 1024);
   const withFr = out.filter((f) => f.properties.names.fr).length;
-  const withQid = out.filter((f) => f.properties.wikidata).length;
   console.log(
-    `  ${out.length} territories → ${path.basename(file)} (${withFr} FR, ${withQid} QID)`
+    `  ${out.length} territories (${withFr} FR) → ${path.basename(file)} (${kb} KB)`
   );
 }
 
 async function main(): Promise<void> {
   await mkdir(OUT_DIR, { recursive: true });
-  for (const year of YEARS) {
+  for (const [i, year] of YEARS.entries()) {
     await seedYear(year);
+    if (i < YEARS.length - 1) await sleep(POLITE_DELAY_MS);
   }
   console.log('\nDone.');
 }

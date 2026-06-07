@@ -105,8 +105,8 @@ export function MapView() {
         map = new maplibregl.Map({
           container: containerRef.current,
           style: buildStyle(borders),
-          center: [2, 47], // France / Western Europe (MVP region)
-          zoom: 4.3,
+          center: [12, 49], // Central Europe
+          zoom: 3.7,
           dragRotate: false,
           attributionControl: false // we render our own Attribution overlay
         });
