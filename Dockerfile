@@ -3,7 +3,7 @@
 # ─────────────────────────────────────────────
 # Stage 1 — Build (export statique Next.js → /out)
 # ─────────────────────────────────────────────
-FROM node:24-alpine AS builder
+FROM node:26-alpine AS builder
 WORKDIR /app
 
 # Couche de dépendances cacheable
