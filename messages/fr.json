@@ -5,8 +5,12 @@
   },
   "Map": {
     "loading": "Chargement de la carte…",
-    "loadError": "Impossible de charger les données de la carte. Veuillez réessayer.",
-    "placeholderTimeline": "Slider temporel (à venir)"
+    "loadError": "Impossible de charger les données de la carte. Veuillez réessayer."
+  },
+  "TimelineSlider": {
+    "play": "Lecture",
+    "pause": "Pause",
+    "year": "Année"
   },
   "LanguageSwitcher": {
     "label": "Langue",

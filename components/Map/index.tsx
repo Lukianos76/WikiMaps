@@ -5,15 +5,18 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { FeatureCollection } from 'geojson';
-import type { Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
+import type { GeoJSONSource, Map as MaplibreMap, StyleSpecification } from 'maplibre-gl';
 
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Attribution } from '@/components/Attribution';
+import { TimelineSlider } from '@/components/TimelineSlider';
+import { AVAILABLE_YEARS, nextYear } from '@/components/TimelineSlider/timeline';
 import { territoryColor } from './territoryColor';
 
-/** Fixed year for now; a time slider (Phase 3) will pick the snapshot. */
-const FIXED_YEAR = 1900;
-const BORDERS_URL = `/data/europe/admin2-${FIXED_YEAR}.geojson`;
+const DEFAULT_YEAR = 1900;
+const PLAY_INTERVAL_MS = 900;
+const bordersUrl = (year: number) => `/data/europe/admin2-${year}.geojson`;
+
 // 50m basemap (not 110m): at the Europe/country zoom the coarse 110m coastline
 // clashed with the detailed OHM borders; 50m hugs the real coast far better.
 const LAND_URL = '/basemap/land-50m.geojson';
@@ -29,6 +32,20 @@ const COASTLINE = '#8b969b';
 const BORDER_LINE = '#8f8678';
 
 type Status = 'loading' | 'ready' | 'error';
+
+/** Fetch a year's snapshot and color each territory by its stable entity id. */
+async function loadBorders(year: number): Promise<FeatureCollection> {
+  const response = await fetch(bordersUrl(year));
+  if (!response.ok) {
+    throw new Error(`Failed to load borders for ${year}: HTTP ${response.status}`);
+  }
+  const borders = (await response.json()) as FeatureCollection;
+  for (const feature of borders.features) {
+    const id = typeof feature.properties?.id === 'string' ? feature.properties.id : '';
+    feature.properties = { ...(feature.properties ?? {}), color: territoryColor(id) };
+  }
+  return borders;
+}
 
 /** Build the inline MapLibre style. Borders are passed pre-colored (inline data). */
 function buildStyle(borders: FeatureCollection): StyleSpecification {
@@ -67,15 +84,32 @@ function buildStyle(borders: FeatureCollection): StyleSpecification {
 }
 
 /**
- * MapView — the application IS the map (map-first). Renders a full-screen
- * MapLibre GL map: a neutral Natural Earth basemap plus the historical borders
- * for FIXED_YEAR, colored per political entity. UI is overlaid, never beside.
+ * MapView — the application IS the map (map-first). A full-screen MapLibre map
+ * over a neutral Natural Earth basemap, showing the historical borders for the
+ * selected year. The TimelineSlider drives `year`; the borders source is swapped
+ * in place as the year changes. UI is overlaid, never beside.
  */
 export function MapView() {
   const t = useTranslations('Map');
   const containerRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<MaplibreMap | null>(null);
+  // Cache loaded (colored) snapshots so scrubbing/replaying is instant.
+  const cacheRef = useRef<Map<number, Promise<FeatureCollection>>>(new Map());
   const [status, setStatus] = useState<Status>('loading');
+  const [year, setYear] = useState(DEFAULT_YEAR);
+  const [playing, setPlaying] = useState(false);
 
+  const getBorders = (y: number): Promise<FeatureCollection> => {
+    const cache = cacheRef.current;
+    let pending = cache.get(y);
+    if (!pending) {
+      pending = loadBorders(y);
+      cache.set(y, pending);
+    }
+    return pending;
+  };
+
+  // Initialize the map once with the default year.
   useEffect(() => {
     let cancelled = false;
     let map: MaplibreMap | undefined;
@@ -83,23 +117,7 @@ export function MapView() {
     (async () => {
       try {
         const maplibregl = (await import('maplibre-gl')).default;
-
-        const response = await fetch(BORDERS_URL);
-        if (!response.ok)
-          throw new Error(`Failed to load borders: HTTP ${response.status}`);
-        const borders = (await response.json()) as FeatureCollection;
-
-        // Color each territory by its stable entity id (Wikidata QID), so an
-        // entity keeps the same color across years regardless of language.
-        for (const feature of borders.features) {
-          const id =
-            typeof feature.properties?.id === 'string' ? feature.properties.id : '';
-          feature.properties = {
-            ...(feature.properties ?? {}),
-            color: territoryColor(id)
-          };
-        }
-
+        const borders = await getBorders(DEFAULT_YEAR);
         if (cancelled || !containerRef.current) return;
 
         map = new maplibregl.Map({
@@ -115,6 +133,7 @@ export function MapView() {
           new maplibregl.NavigationControl({ showCompass: false }),
           'top-right'
         );
+        mapRef.current = map;
 
         map.on('load', () => {
           if (!cancelled) setStatus('ready');
@@ -131,8 +150,54 @@ export function MapView() {
     return () => {
       cancelled = true;
       map?.remove();
+      mapRef.current = null;
     };
   }, []);
+
+  // Swap the borders source whenever the year changes.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || status !== 'ready') return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const borders = await getBorders(year);
+        if (cancelled) return;
+        const source = map.getSource('borders') as GeoJSONSource | undefined;
+        source?.setData(borders);
+      } catch (error) {
+        console.error(error);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [year, status]);
+
+  // Keep the latest year readable from the interval without re-creating it.
+  const yearRef = useRef(year);
+  useEffect(() => {
+    yearRef.current = year;
+  }, [year]);
+
+  // Auto-play: advance the year on an interval; stop at the end.
+  useEffect(() => {
+    if (!playing) return;
+    const id = setInterval(() => {
+      const next = nextYear(AVAILABLE_YEARS, yearRef.current);
+      if (next === null) setPlaying(false);
+      else setYear(next);
+    }, PLAY_INTERVAL_MS);
+    return () => clearInterval(id);
+  }, [playing]);
+
+  const togglePlay = () => {
+    // Pressing play at the end restarts from the beginning.
+    if (!playing && nextYear(AVAILABLE_YEARS, year) === null) setYear(AVAILABLE_YEARS[0]);
+    setPlaying((p) => !p);
+  };
 
   return (
     <main className="relative h-screen w-screen overflow-hidden bg-[#e8e2d5] text-neutral-800">
@@ -155,11 +220,15 @@ export function MapView() {
         <LanguageSwitcher />
       </div>
 
-      {/* Time slider — overlaid, bottom full-width (Phase 3 placeholder) */}
+      {/* Time slider — overlaid, bottom (see UX layout) */}
       <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center p-4">
-        <div className="rounded-full bg-white/80 px-6 py-2 text-xs text-neutral-500 shadow-md backdrop-blur-sm">
-          {t('placeholderTimeline')}
-        </div>
+        <TimelineSlider
+          years={AVAILABLE_YEARS}
+          year={year}
+          onYearChange={setYear}
+          playing={playing}
+          onTogglePlay={togglePlay}
+        />
       </div>
 
       {/* Data source attribution — overlaid, bottom-right (V1 legal requirement) */}

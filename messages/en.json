@@ -5,8 +5,12 @@
   },
   "Map": {
     "loading": "Loading the map…",
-    "loadError": "Could not load the map data. Please try again.",
-    "placeholderTimeline": "Time slider (coming soon)"
+    "loadError": "Could not load the map data. Please try again."
+  },
+  "TimelineSlider": {
+    "play": "Play",
+    "pause": "Pause",
+    "year": "Year"
   },
   "LanguageSwitcher": {
     "label": "Language",
