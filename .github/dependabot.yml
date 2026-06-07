@@ -9,6 +9,11 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    ignore:
+      # ESLint 10 is incompatible with eslint-config-next 16 (see issue #11).
+      # Re-enable major bumps once that issue is resolved.
+      - dependency-name: 'eslint'
+        update-types: ['version-update:semver-major']
     groups:
       # Group minor + patch into a single PR to reduce noise;
       # majors stay as individual PRs (to review carefully).
