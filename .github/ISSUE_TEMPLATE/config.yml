@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/Lukianos76/WikiMaps/discussions
+    about: Questions, ideas and design decisions — discuss here before implementation.
+  - name: 🔒 Security vulnerability
+    url: https://github.com/Lukianos76/WikiMaps/security/advisories/new
+    about: Please report vulnerabilities privately (see SECURITY.md).

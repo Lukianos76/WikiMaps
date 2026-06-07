@@ -1,0 +1,34 @@
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: npm
+    directory: '/'
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore
+      include: scope
+    groups:
+      # Group minor + patch into a single PR to reduce noise;
+      # majors stay as individual PRs (to review carefully).
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  # GitHub Actions (prevents actions from going stale, as seen in Phase 0)
+  - package-ecosystem: github-actions
+    directory: '/'
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci
+
+  # Docker base image (node:24-alpine, nginx:alpine)
+  - package-ecosystem: docker
+    directory: '/'
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: ci

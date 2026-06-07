@@ -1,0 +1,35 @@
+name: 🐛 Bug report
+description: Report incorrect behavior
+labels: ['bug']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the observed vs. expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See the error
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: 'e.g. Chrome 142, Firefox 130, Safari 18'
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If relevant, add a screenshot (drag and drop).
+    validations:
+      required: false
