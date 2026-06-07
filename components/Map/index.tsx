@@ -21,7 +21,7 @@ export function MapView() {
       </div>
 
       {/* Contrôle de langue — superposé, haut gauche (cf. UX Disposition) */}
-      <div className="absolute left-4 top-4 z-10">
+      <div className="absolute top-4 left-4 z-10">
         <LanguageSwitcher />
       </div>
 
@@ -33,7 +33,7 @@ export function MapView() {
       </div>
 
       {/* Attribution des sources — superposé, bas droite (exigence légale V1) */}
-      <div className="absolute bottom-2 right-3 z-10">
+      <div className="absolute right-3 bottom-2 z-10">
         <Attribution />
       </div>
     </main>

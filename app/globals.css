@@ -1,6 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Tailwind v4 : thème configuré en CSS-first via @theme. */
+@theme {
+  /* Sans-sérif pour l'UI */
+  --font-sans: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* Sérif discret pour les noms de territoires (cf. UX Principe 5) */
+  --font-serif: Georgia, Cambria, 'Times New Roman', serif;
+}
 
 /* Map-first : la carte occupe 100vw x 100vh, aucun débordement. */
 html,
