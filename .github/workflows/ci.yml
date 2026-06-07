@@ -6,9 +6,14 @@ on:
   pull_request:
     branches: [main]
 
+# Annule les runs obsolètes quand on pousse plusieurs fois rapidement.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint-build:
-    name: Lint, format & build
+    name: Lint, test, format & build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -19,6 +24,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run format:check
+      - run: npm test
       - run: npm run build
 
   docker:

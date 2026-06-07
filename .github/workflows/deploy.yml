@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# SQUELETTE de déploiement — DÉSACTIVÉ tant que les secrets ne sont pas configurés.
+# Déclenchement manuel uniquement (workflow_dispatch) pour ne rien casser.
+#
+# Stratégie : le serveur tire l'image publiée sur GHCR par la CI et redémarre
+# le conteneur (pas de build sur le serveur).
+#
+# Secrets à créer dans Settings → Secrets and variables → Actions :
+#   VPS_HOST        ex : 203.0.113.10
+#   VPS_USER        ex : deploy
+#   VPS_SSH_KEY     clé privée SSH (format OpenSSH)
+#   VPS_PORT        (optionnel) port SSH, défaut 22
+#
+# Côté serveur, prévoir un docker-compose.prod.yml référençant
+#   image: ghcr.io/lukianos76/wikimaps:latest
+# et un `docker login ghcr.io` (ou image publique).
+# ─────────────────────────────────────────────────────────────────────────────
+name: Deploy (VPS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag de l'image GHCR à déployer"
+        required: false
+        default: 'latest'
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+    # Garde-fou : ne s'exécute que si le secret VPS_HOST existe.
+    if: ${{ vars.DEPLOY_ENABLED == 'true' }}
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            cd /opt/wikimaps
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
+            docker image prune -f

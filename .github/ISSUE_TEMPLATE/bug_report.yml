@@ -1,0 +1,35 @@
+name: 🐛 Bug report
+description: Signaler un comportement incorrect
+labels: ['bug']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Décris le comportement observé vs. attendu.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Étapes pour reproduire
+      placeholder: |
+        1. Aller sur '...'
+        2. Cliquer sur '...'
+        3. Voir l'erreur
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Navigateur et version
+      placeholder: 'ex : Chrome 142, Firefox 130, Safari 18'
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Captures d'écran
+      description: Si pertinent, ajoute une capture (glisser-déposer).
+    validations:
+      required: false

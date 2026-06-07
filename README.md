@@ -8,11 +8,11 @@ Inspiration : le système de filtres de carte d'Europa Universalis / des jeux Pa
 
 ## Stack
 
-- **Next.js 14** (App Router) + **TypeScript** strict
+- **Next.js 16** (App Router) + **React 19** + **TypeScript** strict
 - **MapLibre GL JS** (rendu WebGL) — _intégration Phase 2_
-- **Tailwind CSS** (UI hors-carte uniquement)
-- **next-intl** (i18n FR/EN natif)
-- **Docker** multi-stage (Nginx) + **docker-compose**
+- **Tailwind CSS v4** (UI hors-carte uniquement)
+- **next-intl 4** (i18n FR/EN natif)
+- **Docker** multi-stage (Node 24 → Nginx) + **docker-compose**
 - **GitHub Actions** → GHCR
 
 ## Démarrage
@@ -34,13 +34,15 @@ docker compose up --build
 
 ## Scripts
 
-| Commande               | Description                               |
-| ---------------------- | ----------------------------------------- |
-| `npm run dev`          | Serveur de développement Next.js          |
-| `npm run build`        | Build + export statique (→ `out/`)        |
-| `npm run lint`         | ESLint (next/core-web-vitals + TS strict) |
-| `npm run format`       | Formate le code avec Prettier             |
-| `npm run format:check` | Vérifie le formatage (utilisé en CI)      |
+| Commande               | Description                            |
+| ---------------------- | -------------------------------------- |
+| `npm run dev`          | Serveur de développement Next.js       |
+| `npm run build`        | Build + export statique (→ `out/`)     |
+| `npm run lint`         | ESLint (flat config, next + TS strict) |
+| `npm test`             | Tests unitaires (Vitest)               |
+| `npm run test:watch`   | Tests en mode watch                    |
+| `npm run format`       | Formate le code avec Prettier          |
+| `npm run format:check` | Vérifie le formatage (utilisé en CI)   |
 
 ## Architecture i18n
 
@@ -64,6 +66,22 @@ wikimaps/
 ├── docker-compose.yml
 └── nginx.conf
 ```
+
+## Qualité, CI/CD & observabilité
+
+- **CI** ([`ci.yml`](./.github/workflows/ci.yml)) : lint + test + format + build, puis
+  build & push de l'image Docker vers GHCR sur `main`.
+- **CodeQL** ([`codeql.yml`](./.github/workflows/codeql.yml)) : analyse de sécurité (push, PR, hebdo).
+- **Dependabot** ([`dependabot.yml`](./.github/dependabot.yml)) : mises à jour hebdo (npm, GitHub Actions, Docker).
+- **Tests** : Vitest + Testing Library (`*.test.tsx` à côté des composants).
+- **Commits** : Conventional Commits **imposés** par commitlint (hook `commit-msg`),
+  avec les types projet `data:` et `i18n:`.
+- **Cohérence** : `.editorconfig` + `.gitattributes` (fins de ligne LF).
+- **Déploiement** ([`deploy.yml`](./.github/workflows/deploy.yml)) : squelette VPS (pull GHCR via SSH),
+  manuel et désactivé tant que les secrets / `vars.DEPLOY_ENABLED=true` ne sont pas définis.
+- **Observabilité** (à activer Phase 6) : variables prévues dans [`.env.example`](./.env.example)
+  (Sentry pour les erreurs client, Plausible pour l'analytics). _Branch protection_ recommandée
+  une fois passé en flux par PR.
 
 ## Sources de données
 
