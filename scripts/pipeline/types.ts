@@ -52,6 +52,26 @@ export interface FetchManifest {
   snapshots: SnapshotRef[];
 }
 
+/**
+ * Year-precise territory (OpenHistoricalMap-seeded model). Unlike the snapshot
+ * model above, validity is carried per feature via [from, to), so any year can
+ * be rendered by filtering. `names` keeps every language OHM provides.
+ */
+export interface TemporalTerritoryProperties {
+  /** Stable entity id: Wikidata QID when present, else `ohm-<type>-<id>`. */
+  id: string;
+  /** Multilingual names keyed by language code (en, fr, la, …). */
+  names: Record<string, string>;
+  /** Start year (decimal, negative for BC), or null when unknown/open. */
+  from: number | null;
+  /** End year (decimal), or null when still extant. */
+  to: number | null;
+  wikidata: string | null;
+  adminLevel: number | null;
+  source: string;
+  sourceUrl: string;
+}
+
 export type LocalizedNames = Record<TargetLang, string>;
 export type WikipediaLinks = Partial<Record<TargetLang, string>>;
 

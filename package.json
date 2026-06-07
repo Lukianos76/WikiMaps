@@ -5,6 +5,7 @@
   "description": "Atlas mondial interactif, open source et gratuit — la carte est l'interface.",
   "license": "MIT",
   "scripts": {
+    "predev": "node scripts/copy-data.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -17,12 +18,15 @@
     "data:enrich": "tsx scripts/pipeline/enrich-wikidata.ts",
     "data:transform": "tsx scripts/pipeline/transform.ts",
     "data:validate": "tsx scripts/pipeline/validate.ts",
+    "data:seed-europe": "tsx scripts/pipeline/seed-europe.ts",
     "data:build": "npm run data:fetch && npm run data:enrich && npm run data:transform && npm run data:validate",
     "prepare": "husky"
   },
   "dependencies": {
+    "maplibre-gl": "^5.24.0",
     "next": "^16.2.7",
     "next-intl": "^4.13.0",
+    "osmtogeojson": "^3.0.0-beta.5",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
@@ -35,6 +39,7 @@
     "@testing-library/react": "^16.3.2",
     "@types/geojson": "^7946.0.16",
     "@types/node": "^24.13.1",
+    "@types/osmtogeojson": "^2.2.34",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
